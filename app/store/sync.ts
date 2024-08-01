@@ -32,7 +32,7 @@ const DEFAULT_SYNC_STATE = {
   webdav: {
     endpoint: "https://dav.jianguoyun.com/dav/",
     username: "i@infrost.site",
-    password: "atkh5s9c4vk4ccp7",
+    password: "",
   },
 
   upstash: {
