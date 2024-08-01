@@ -30,9 +30,9 @@ const DEFAULT_SYNC_STATE = {
   proxyUrl: corsPath(ApiPath.Cors),
 
   webdav: {
-    endpoint: "",
-    username: "",
-    password: "",
+    endpoint: "https://dav.jianguoyun.com/dav/",
+    username: "i@infrost.site",
+    password: "atkh5s9c4vk4ccp7",
   },
 
   upstash: {
