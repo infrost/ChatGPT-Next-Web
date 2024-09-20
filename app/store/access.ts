@@ -39,9 +39,21 @@ const DEFAULT_ALIBABA_URL = isApp
   ? DEFAULT_API_HOST + "/api/proxy/alibaba"
   : ApiPath.Alibaba;
 
+const DEFAULT_TENCENT_URL = isApp
+  ? DEFAULT_API_HOST + "/api/proxy/tencent"
+  : ApiPath.Tencent;
+
+const DEFAULT_MOONSHOT_URL = isApp
+  ? DEFAULT_API_HOST + "/api/proxy/moonshot"
+  : ApiPath.Moonshot;
+
 const DEFAULT_STABILITY_URL = isApp
   ? DEFAULT_API_HOST + "/api/proxy/stability"
   : ApiPath.Stability;
+
+const DEFAULT_IFLYTEK_URL = isApp
+  ? DEFAULT_API_HOST + "/api/proxy/iflytek"
+  : ApiPath.Iflytek;
 
 const DEFAULT_ACCESS_STATE = {
   accessCode: "",
@@ -82,9 +94,23 @@ const DEFAULT_ACCESS_STATE = {
   alibabaUrl: DEFAULT_ALIBABA_URL,
   alibabaApiKey: "",
 
+  // moonshot
+  moonshotUrl: DEFAULT_MOONSHOT_URL,
+  moonshotApiKey: "",
+
   //stability
   stabilityUrl: DEFAULT_STABILITY_URL,
   stabilityApiKey: "",
+
+  // tencent
+  tencentUrl: DEFAULT_TENCENT_URL,
+  tencentSecretKey: "",
+  tencentSecretId: "",
+
+  // iflytek
+  iflytekUrl: DEFAULT_IFLYTEK_URL,
+  iflytekApiKey: "",
+  iflytekApiSecret: "",
 
   // server config
   needCode: true,
@@ -94,6 +120,9 @@ const DEFAULT_ACCESS_STATE = {
   disableFastLink: false,
   customModels: "",
   defaultModel: "",
+
+  // tts config
+  edgeTTSVoiceName: "zh-CN-YunxiNeural",
 };
 
 export const useAccessStore = createPersistStore(
@@ -104,6 +133,12 @@ export const useAccessStore = createPersistStore(
       this.fetch();
 
       return get().needCode;
+    },
+
+    edgeVoiceName() {
+      this.fetch();
+
+      return get().edgeTTSVoiceName;
     },
 
     isValidOpenAI() {
@@ -134,6 +169,17 @@ export const useAccessStore = createPersistStore(
       return ensure(get(), ["alibabaApiKey"]);
     },
 
+    isValidTencent() {
+      return ensure(get(), ["tencentSecretKey", "tencentSecretId"]);
+    },
+
+    isValidMoonshot() {
+      return ensure(get(), ["moonshotApiKey"]);
+    },
+    isValidIflytek() {
+      return ensure(get(), ["iflytekApiKey"]);
+    },
+
     isAuthorized() {
       this.fetch();
 
@@ -146,6 +192,9 @@ export const useAccessStore = createPersistStore(
         this.isValidBaidu() ||
         this.isValidByteDance() ||
         this.isValidAlibaba() ||
+        this.isValidTencent() ||
+        this.isValidMoonshot() ||
+        this.isValidIflytek() ||
         !this.enabledAccessControl() ||
         (this.enabledAccessControl() && ensure(get(), ["accessCode"]))
       );
@@ -164,8 +213,8 @@ export const useAccessStore = createPersistStore(
         .then((res) => {
           // Set default model from env request
           let defaultModel = res.defaultModel ?? "";
-          DEFAULT_CONFIG.modelConfig.model =
-            defaultModel !== "" ? defaultModel : "gpt-3.5-turbo";
+          if (defaultModel !== "")
+            DEFAULT_CONFIG.modelConfig.model = defaultModel;
           return res;
         })
         .then((res: DangerConfig) => {
